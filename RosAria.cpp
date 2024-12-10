@@ -293,7 +293,7 @@ RosAriaNode::RosAriaNode(ros::NodeHandle nh) :
   sonar_enabled(false), publish_sonar(false), publish_sonar_pointcloud2(false),
   debug_aria(false), 
   TicksMM(-1), DriftFactor(-99999), RevCount(-1),
-  // publish_aria_lasers(false)
+  publish_aria_lasers(false)
 {
   // read in runtime parameters
 
