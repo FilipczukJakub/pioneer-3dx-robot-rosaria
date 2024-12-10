@@ -107,7 +107,7 @@ class RosAriaNode
     ArRobotConnector *conn;
     ArLaserConnector *laserConnector;
     ArRobot *robot;
-    ArGripper *gripper;
+    ArGripper::ArGripper gripper;
     nav_msgs::Odometry position;
     rosaria::BumperState bumpers;
     ArPose pos;
@@ -365,7 +365,7 @@ int RosAriaNode::Setup()
   // called once per instance, and these objects need to persist until the process terminates.
 
   robot = new ArRobot();
-  gripper = new ArGripper(robot&);
+  gripper = new ArGripper(robot);
   ArArgumentBuilder *args = new ArArgumentBuilder(); //  never freed
   ArArgumentParser *argparser = new ArArgumentParser(args); // Warning never freed
   argparser->loadDefaultArguments(); // adds any arguments given in /etc/Aria.args.  Useful on robots with unusual serial port or baud rate (e.g. pioneer lx)
