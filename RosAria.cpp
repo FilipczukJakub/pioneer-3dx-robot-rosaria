@@ -107,7 +107,7 @@ class RosAriaNode
     ArRobotConnector *conn;
     ArLaserConnector *laserConnector;
     ArRobot *robot;
-    ArGripper *gripper;
+    ArGripper gripper;
     nav_msgs::Odometry position;
     rosaria::BumperState bumpers;
     ArPose pos;
