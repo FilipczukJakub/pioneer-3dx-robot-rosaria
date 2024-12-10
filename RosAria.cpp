@@ -107,6 +107,7 @@ class RosAriaNode
     ArRobotConnector *conn;
     ArLaserConnector *laserConnector;
     ArRobot *robot;
+    ArGripper *gripper;
     nav_msgs::Odometry position;
     rosaria::BumperState bumpers;
     ArPose pos;
@@ -762,7 +763,7 @@ void RosAriaNode::cmdvel_watchdog(const ros::TimerEvent& event)
 
 void RosAriaNode::gripper_cb( const int &msg)
 {
-  ArGripper::ArGripper gripper(robot);
+  // ArGripper::ArGripper gripper(robot);
   // ArGripper::ArGripper gripper = gripperArGripper::ArGripper(robot);
   ROS_INFO( "gripper action: [%d]", msg );
   switch(msg){
