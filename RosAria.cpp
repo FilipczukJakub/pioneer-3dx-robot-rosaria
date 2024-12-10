@@ -2,8 +2,10 @@
 #include <math.h>
 #ifdef ADEPT_PKG
   #include <Aria.h>
+  #include <ArGripper.h>
   #include <ArRobotConfigPacketReader.h> // todo remove after ArRobotConfig implemented in AriaCoda
 #else
+  #include <Aria/ArGripper.h>
   #include <Aria/Aria.h>
   #include <Aria/ArRobotConfigPacketReader.h> // todo remove after ArRobotConfig implemented in AriaCoda
 #endif
@@ -59,6 +61,8 @@ class RosAriaNode
     int Setup();
     void cmdvel_cb( const geometry_msgs::TwistConstPtr &);
     void cmdvel_watchdog(const ros::TimerEvent& event);
+    void gripper_cb( const int &);
+    void gripper_watchdog(const ros::TimerEvent& event);
     //void cmd_enable_motors_cb();
     //void cmd_disable_motors_cb();
     void spin();
@@ -85,6 +89,7 @@ class RosAriaNode
     bool published_motors_state;
 
     ros::Subscriber cmdvel_sub;
+    ros::Subscriber gripper_sub;
 
     ros::ServiceServer enable_srv;
     ros::ServiceServer disable_srv;
@@ -94,7 +99,8 @@ class RosAriaNode
     ros::Time veltime;
     ros::Timer cmdvel_watchdog_timer;
     ros::Duration cmdvel_timeout;
-
+    ros::Timer gripper_watchdog_timer;
+    ros::Duration gripper_timeout;
     std::string serial_port;
     int serial_baud;
 
@@ -358,6 +364,7 @@ int RosAriaNode::Setup()
   // called once per instance, and these objects need to persist until the process terminates.
 
   robot = new ArRobot();
+  gripper = new ArGripper(robot&);
   ArArgumentBuilder *args = new ArArgumentBuilder(); //  never freed
   ArArgumentParser *argparser = new ArArgumentParser(args); // Warning never freed
   argparser->loadDefaultArguments(); // adds any arguments given in /etc/Aria.args.  Useful on robots with unusual serial port or baud rate (e.g. pioneer lx)
@@ -514,7 +521,6 @@ int RosAriaNode::Setup()
   // subscribe to command topics
   cmdvel_sub = n.subscribe( "cmd_vel", 1, (boost::function <void(const geometry_msgs::TwistConstPtr&)>)
       boost::bind(&RosAriaNode::cmdvel_cb, this, _1 ));
-
   // register a watchdog for cmd_vel timeout
   double cmdvel_timeout_param = 0.6;
   n.param("cmd_vel_timeout", cmdvel_timeout_param, 0.6);
@@ -522,6 +528,15 @@ int RosAriaNode::Setup()
   if (cmdvel_timeout_param > 0.0)
     cmdvel_watchdog_timer = n.createTimer(ros::Duration(0.1), &RosAriaNode::cmdvel_watchdog, this);
 
+
+  gripper_sub = n.subscribe( "gripper", 1, (boost::function <void(const int&)>)
+      boost::bind(&RosAriaNode::gripper_cb, this, _1 ));
+  // register a watchdog for cmd_vel timeout
+  // double gripper_timeout_param = 0.6;
+  // n.param("gripper_timeout", gripper_timeout_param, 0.6);
+  // gripper_timeout = ros::Duration(gripper_timeout_param);
+  // if (gripper_timeout_param > 0.0)
+  //   gripper_watchdog_timer = n.createTimer(ros::Duration(0.1), &RosAriaNode::gripper_watchdog, this);
   ROS_INFO_NAMED("rosaria", "rosaria: Setup complete");
   return 0;
 }
@@ -716,8 +731,7 @@ bool RosAriaNode::disable_motors_cb(std_srvs::Empty::Request& request, std_srvs:
     return true;
 }
 
-void
-RosAriaNode::cmdvel_cb( const geometry_msgs::TwistConstPtr &msg)
+void RosAriaNode::cmdvel_cb( const geometry_msgs::TwistConstPtr &msg)
 {
   veltime = ros::Time::now();
   ROS_INFO( "new speed: [%0.2f,%0.2f](%0.3f)", msg->linear.x*1e3, msg->angular.z, veltime.toSec() );
@@ -746,6 +760,27 @@ void RosAriaNode::cmdvel_watchdog(const ros::TimerEvent& event)
   }
 }
 
+void RosAriaNode::gripper_cb( const int &msg)
+{
+  // ArGripper::ArGripper gripper(robot);
+  ArGripper::ArGripper gripper = gripperArGripper::ArGripper(robot);
+  ROS_INFO( "gripper action: [%d]", msg );
+  switch(msg){
+	  case 0:
+	  	gripper.gripOpen();
+	  	break;
+	  case 1:
+	  	gripper.gripClose();
+  }
+  // robot->lock();
+  // robot->setVel(msg->linear.x*1e3);
+  // if(robot->hasLatVel())
+  //   robot->setLatVel(msg->linear.y*1e3);
+  // robot->setRotVel(msg->angular.z*180/M_PI);
+  // robot->unlock();
+  // ROS_DEBUG("RosAria: sent vels to to aria (time %f): x vel %f mm/s, y vel %f mm/s, ang vel %f deg/s", veltime.toSec(),
+  //   (double) msg->linear.x * 1e3, (double) msg->linear.y * 1e3, (double) msg->angular.z * 180/M_PI);
+}
 
 int main( int argc, char** argv )
 {
