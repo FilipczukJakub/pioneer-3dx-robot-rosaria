@@ -366,7 +366,7 @@ int RosAriaNode::Setup()
 
   robot = new ArRobot();
   gripper = new ArGripper(robot);
-  ArGripper::ArGripper gripper = new ArGripper::ArGripper(robot);
+  // ArGripper::ArGripper gripper = new ArGripper::ArGripper(robot);
   ArArgumentBuilder *args = new ArArgumentBuilder(); //  never freed
   ArArgumentParser *argparser = new ArArgumentParser(args); // Warning never freed
   argparser->loadDefaultArguments(); // adds any arguments given in /etc/Aria.args.  Useful on robots with unusual serial port or baud rate (e.g. pioneer lx)
