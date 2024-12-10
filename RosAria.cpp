@@ -366,7 +366,7 @@ int RosAriaNode::Setup()
 
   robot = new ArRobot();
   gripper = new ArGripper(robot);
-  // ArGripper::ArGripper gripper = new ArGripper::ArGripper(robot);
+  // ArGripper:: ArGripper gripper = new ArGripper::ArGripper(robot);
   ArArgumentBuilder *args = new ArArgumentBuilder(); //  never freed
   ArArgumentParser *argparser = new ArArgumentParser(args); // Warning never freed
   argparser->loadDefaultArguments(); // adds any arguments given in /etc/Aria.args.  Useful on robots with unusual serial port or baud rate (e.g. pioneer lx)
@@ -531,7 +531,7 @@ int RosAriaNode::Setup()
     cmdvel_watchdog_timer = n.createTimer(ros::Duration(0.1), &RosAriaNode::cmdvel_watchdog, this);
 
 
-  gripper_sub = n.subscribe( "gripper", 1, (boost::function <void(const int&)>)
+  gripper_sub = n.subscribe( "gripper", 1, (boost::function <void(const msg::Int8&)>)
       boost::bind(&RosAriaNode::gripper_cb, this, _1 ));
   // register a watchdog for cmd_vel timeout
   // double gripper_timeout_param = 0.6;
