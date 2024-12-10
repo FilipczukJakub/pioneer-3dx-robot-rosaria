@@ -762,7 +762,7 @@ void RosAriaNode::cmdvel_watchdog(const ros::TimerEvent& event)
 
 void RosAriaNode::gripper_cb( const int &msg)
 {
-  ArGripper gripper(robot);
+  ArGripper::ArGripper gripper(robot);
   // ArGripper::ArGripper gripper = gripperArGripper::ArGripper(robot);
   ROS_INFO( "gripper action: [%d]", msg );
   switch(msg){
