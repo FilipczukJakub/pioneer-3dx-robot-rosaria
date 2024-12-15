@@ -531,7 +531,7 @@ int RosAriaNode::Setup()
     cmdvel_watchdog_timer = n.createTimer(ros::Duration(0.1), &RosAriaNode::cmdvel_watchdog, this);
 
 
-  gripper_sub = n.subscribe( "gripper", 1, (boost::function <void(const msg::Int8&)>)
+  gripper_sub = n.subscribe( "gripper", 1, (boost::function <void(const std_msgs::Int8&)>)
       boost::bind(&RosAriaNode::gripper_cb, this, _1 ));
   // register a watchdog for cmd_vel timeout
   // double gripper_timeout_param = 0.6;
