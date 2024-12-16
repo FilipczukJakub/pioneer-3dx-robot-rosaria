@@ -61,7 +61,7 @@ class RosAriaNode
     int Setup();
     void cmdvel_cb( const geometry_msgs::TwistConstPtr &);
     void cmdvel_watchdog(const ros::TimerEvent& event);
-    void gripper_cb( const int &);
+    void gripper_cb( const std_msgs::Int8 &);
     void gripper_watchdog(const ros::TimerEvent& event);
     //void cmd_enable_motors_cb();
     //void cmd_disable_motors_cb();
@@ -518,14 +518,14 @@ int RosAriaNode::Setup()
     }
     robot->unlock();
     ROS_INFO_NAMED("rosaria", "rosaria: Done creating laser publishers");
-  }
+  } 
     
   // subscribe to command topics
   cmdvel_sub = n.subscribe( "cmd_vel", 1, (boost::function <void(const geometry_msgs::TwistConstPtr&)>)
       boost::bind(&RosAriaNode::cmdvel_cb, this, _1 ));
   // register a watchdog for cmd_vel timeout
   double cmdvel_timeout_param = 0.6;
-  n.param("cmd_vel_timeout", cmdvel_timeout_param, 0.6);
+  n.param("cmd_vel_timeout", cmdvel_timeout_param, 0.6); 
   cmdvel_timeout = ros::Duration(cmdvel_timeout_param);
   if (cmdvel_timeout_param > 0.0)
     cmdvel_watchdog_timer = n.createTimer(ros::Duration(0.1), &RosAriaNode::cmdvel_watchdog, this);
@@ -762,7 +762,7 @@ void RosAriaNode::cmdvel_watchdog(const ros::TimerEvent& event)
   }
 }
 
-void RosAriaNode::gripper_cb( const int &msg)
+void RosAriaNode::gripper_cb( const std_msgs::Int8 &msg)
 {
   // ArGripper::ArGripper gripper(robot);
   // ArGripper::ArGripper gripper = gripperArGripper::ArGripper(robot);
