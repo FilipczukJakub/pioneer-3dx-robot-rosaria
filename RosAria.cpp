@@ -766,8 +766,8 @@ void RosAriaNode::gripper_cb( const std_msgs::Int8 &msg)
 {
   // ArGripper::ArGripper gripper(robot);
   // ArGripper::ArGripper gripper = gripperArGripper::ArGripper(robot);
-  ROS_INFO( "gripper action: [%d]", msg );
-  switch(msg){
+  ROS_INFO( "gripper action: [%d]", msg.data );
+  switch(msg.data){
 	  case 0:
 	  	gripper->gripOpen();
 	  	break;
