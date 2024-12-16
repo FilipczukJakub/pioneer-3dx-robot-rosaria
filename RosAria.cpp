@@ -61,7 +61,7 @@ class RosAriaNode
     int Setup();
     void cmdvel_cb( const geometry_msgs::TwistConstPtr &);
     void cmdvel_watchdog(const ros::TimerEvent& event);
-    void gripper_cb( const std_msgs::Int32::ConstPtr &);
+    void gripper_cb( const std_msgs::Int8::ConstPtr &);
     void gripper_watchdog(const ros::TimerEvent& event);
     //void cmd_enable_motors_cb();
     //void cmd_disable_motors_cb();
@@ -531,7 +531,7 @@ int RosAriaNode::Setup()
     cmdvel_watchdog_timer = n.createTimer(ros::Duration(0.1), &RosAriaNode::cmdvel_watchdog, this);
 
 
-  gripper_sub = n.subscribe( "gripper", 1, (boost::function <void(const std_msgs::Int32::ConstPtr&)>)
+  gripper_sub = n.subscribe( "gripper", 1, (boost::function <void(const std_msgs::Int8::ConstPtr&)>)
       boost::bind(&RosAriaNode::gripper_cb, this, _1 ));
   // register a watchdog for cmd_vel timeout
   // double gripper_timeout_param = 0.6;
@@ -733,7 +733,7 @@ bool RosAriaNode::disable_motors_cb(std_srvs::Empty::Request& request, std_srvs:
     return true;
 }
 
-void RosAriaNode::cmdvel_cb( const geometry_m sgs::TwistConstPtr &msg)
+void RosAriaNode::cmdvel_cb( const geometry_msgs::TwistConstPtr &msg)
 {
   veltime = ros::Time::now();
   ROS_INFO( "new speed: [%0.2f,%0.2f](%0.3f)", msg->linear.x*1e3, msg->angular.z, veltime.toSec() );
@@ -762,7 +762,7 @@ void RosAriaNode::cmdvel_watchdog(const ros::TimerEvent& event)
   }
 }
 
-void RosAriaNode::gripper_cb( const std_msgs::Int32::ConstPtr &msg)
+void RosAriaNode::gripper_cb( const std_msgs::Int8::ConstPtr &msg)
 {
   // ArGripper::ArGripper gripper(robot);
   // ArGripper::ArGripper gripper = gripperArGripper::ArGripper(robot);
