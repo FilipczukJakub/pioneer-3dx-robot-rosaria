@@ -773,6 +773,22 @@ void RosAriaNode::gripper_cb( const std_msgs::Int8::ConstPtr &msg)
 	  	break;
 	  case 1:
 	  	gripper->gripClose();
+      break;
+    case 2:
+	  	gripper->gripStop();
+      break;
+    case 3:
+	  	gripper->liftUp();
+      break;
+    case 4:
+	  	gripper->liftDown();
+      break;
+    case 5:
+	  	gripper->liftStop();
+      break;
+    case 6:
+	  	gripper->gripperStore();
+      break;
   }
   // robot->lock();
   // robot->setVel(msg->linear.x*1e3);
